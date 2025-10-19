@@ -1,7 +1,7 @@
 window.TIAN_STORE_CONFIG = {
   name: "Tian Store",
   description: "Toko online minimalis bergaya modern.",
-  contactWA: "6282245682288",
+  contactWA: "6283878301449",
   theme: {
     primary: ["#0B61FF", "#2A8DFF", "#79AFFF"],
     bg: "#FFFFFF",
