@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tian Store - Digital Top Up & Shopping</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --light-blue: #dbeafe;
+            --dark-blue: #1d4ed8;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #000000;
+            --text-secondary: #000000;
+            --white: #ffffff;
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.1) 0%, transparent 20%);
+            z-index: -1;
+        }
+
+        /* Glassmorphism base */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--primary-blue);
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 80%;
+            height: 2px;
+            background: var(--text-primary);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            color: var(--text-primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 10px;
+            width: 220px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            z-index: 1001;
+        }
+
+        .user-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .dropdown-item i {
+            width: 24px;
+            text-align: center;
+        }
+
+        .auth-buttons button {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .auth-buttons button:hover {
+            background: var(--dark-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Categories */
+        .categories {
+            padding: 2rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-list {
+            display: inline-flex;
+            gap: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .category-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .category-item:hover,
+        .category-item.active {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Search */
+        .search-container {
+            padding: 0 2rem 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input::placeholder {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Products */
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 2rem 0 1.5rem;
+            padding: 0 2rem;
+            color: var(--text-primary);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+            padding: 0 2rem 2rem;
+        }
+
+        .product-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), transparent);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.25);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-blue);
+        }
+
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        .product-price {
+            font-weight: 700;
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-stock {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .btn-add {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .btn-add:hover {
+            background: var(--dark-blue);
+        }
+
+        /* Cart */
+        .cart-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        .cart {
+            background: var(--primary-blue);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+            transition: var(--transition);
+        }
+
+        .cart:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .cart-panel {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 320px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transform: translateY(20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .cart-container:hover .cart-panel {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cart-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .cart-items {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: right;
+            margin: 1rem 0;
+            color: var(--text-primary);
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 12px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-checkout:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        /* About & Contact */
+        .about-section, .contact-section {
+            padding: 3rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-content, .contact-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .about-content h2, .contact-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .about-content p, .contact-content p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            text-align: left;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-blue);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .contact-text h3 {
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .contact-text p {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 3rem 2rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            padding: 2.5rem;
+            position: relative;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-control::placeholder {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-submit:hover {
+            background: var(--dark-blue);
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .switch-form a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 1rem;
+                padding: 0 1rem 2rem;
+            }
+            
+            .cart-container {
+                bottom: 1rem;
+                right: 1rem;
+            }
+            
+            .cart-panel {
+                width: 280px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar glass">
+        <a href="#" class="logo">
+            <i class="fas fa-wind"></i>
+            <span>Tian Store</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#home">Beranda</a></li>
+            <li><a href="#products">Produk</a></li>
+            <li><a href="#transactions">Cek Transaksi</a></li>
+            <li><a href="#about">Tentang Kami</a></li>
+            <li><a href="#contact">Kontak</a></li>
+            <li><a href="#dashboard">Dashboard</a></li>
+        </ul>
+        <div class="user-actions">
+            <div class="auth-buttons" id="authButtons">
+                <button id="loginBtn">Login</button>
+                <button id="registerBtn">Register</button>
+            </div>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <i class="fas fa-user"></i>
+                <span id="userName">Telah masuk sebagai User</span>
+            </div>
+            <div class="user-dropdown" id="userDropdown" style="display: none;">
+                <div class="user-btn">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-wallet"></i>
+                        <span>Saldo: Rp 0</span>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Mutasi</span>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Pengaturan</span>
+                    </a>
+                    <a href="#" class="dropdown-item" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <h1 class="fade-in">Tian Store – Tempat Top Up dan Belanja Digital Termurah & Terpercaya</h1>
+        <p class="fade-in delay-1">Nikmati kemudahan bertransaksi digital dengan harga terbaik dan pelayanan tercepat di Indonesia.</p>
+        <button class="btn-primary fade-in delay-2" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">Mulai Belanja Sekarang</button>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories">
+        <div class="category-list" id="categoryList">
+            <!-- Categories will be populated by JS -->
+        </div>
+    </section>
+
+    <!-- Search -->
+    <div class="search-container">
+        <input type="text" class="search-input" id="searchInput" placeholder="Cari produk...">
+    </div>
+
+    <!-- Popular Products -->
+    <h2 class="section-title fade-in delay-3">Populer Sekarang!</h2>
+    <div class="products-grid" id="popularProducts">
+        <!-- Popular products will be populated by JS -->
+    </div>
+
+    <!-- All Products -->
+    <section id="products">
+        <h2 class="section-title fade-in delay-4">Semua Produk</h2>
+        <div class="products-grid" id="allProducts">
+            <!-- All products will be populated by JS -->
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="about-content fade-in delay-5">
+            <h2>Tentang Tian Store</h2>
+            <p>Tian Store adalah platform top up & digital shop terpercaya di Indonesia, menghadirkan kemudahan transaksi digital dengan harga terjangkau dan pelayanan cepat.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="contact-content fade-in delay-5">
+            <h2>Kontak Kami</h2>
+            <p>Hubungi kami untuk informasi lebih lanjut atau bantuan pelanggan</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>WhatsApp</h3>
+                        <p>+6282245682288</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Instagram</h3>
+                        <p>@tian_store</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Email</h3>
+                        <p>support@tianstore.com</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Alamat</h3>
+                        <p>Jakarta, Indonesia</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart -->
+    <div class="cart-container">
+        <div class="cart">
+            <i class="fas fa-shopping-cart"></i>
+            <div class="cart-count" id="cartCount">0</div>
+        </div>
+        <div class="cart-panel">
+            <h3 class="cart-title">Keranjang Belanja</h3>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be populated by JS -->
+            </div>
+            <div class="cart-total" id="cartTotal">Total: Rp 0</div>
+            <button class="btn-checkout" id="checkoutBtn">Checkout Sekarang</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Tian Store</h3>
+                <p style="color: var(--text-primary); margin-top: 1rem;">Platform top up & digital shop terpercaya di Indonesia.</p>
+                <div class="social-icons">
+                    <a href="https://wa.me/6282245682288" class="social-icon" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Tautan Cepat</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Kemitraan</a></li>
+                    <li><a href="#">Daftar Harga</a></li>
+                    <li><a href="#">Kebijakan Privasi</a></li>
+                    <li><a href="#">Syarat & Ketentuan</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Kontak</h3>
+                <ul class="footer-links">
+                    <li>WhatsApp: +6282245682288</li>
+                    <li>Email: support@tianstore.com</li>
+                    <li>Instagram: @tian_store</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2025 Tian Store. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Login</h3>
+                <button class="close-modal" id="closeLoginModal">&times;</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn-submit">Login</button>
+            </form>
+            <div class="switch-form">
+                Belum punya akun? <a href="#" id="showRegister">Register sekarang</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Register</h3>
+                <button class="close-modal" id="closeRegisterModal">&times;</button>
+            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerUsername">Username</label>
+                    <input type="text" id="registerUsername" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPhone">Nomor Telepon</label>
+                    <input type="tel" id="registerPhone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="referral">Referral (Opsional)</label>
+                    <input type="text" id="referral" class="form-control">
+                </div>
+                <button type="submit" class="btn-submit">Register</button>
+            </form>
+            <div class="switch-form">
+                Sudah punya akun? <a href="#" id="showLogin">Login sekarang</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Config.js data
+        const categories = {
+            "Top Up Games": [
+                { id: 1, name: "Mobile Legends", price: 5000, stock: 100, image: "mlbb.jpg" },
+                { id: 2, name: "Free Fire", price: 4500, stock: 85, image: "ff.jpg" },
+                { id: 3, name: "PUBG Mobile", price: 6000, stock: 70, image: "pubg.jpg" },
+                { id: 4, name: "Genshin Impact", price: 7000, stock: 50, image: "genshin.jpg" }
+            ],
+            "E-Money": [
+                { id: 5, name: "GoPay", price: 10000, stock: 120, image: "gopay.jpg" },
+                { id: 6, name: "Dana", price: 10000, stock: 110, image: "dana.jpg" }
+            ],
+            "Voucher App": [
+                { id: 7, name: "Netflix", price: 55000, stock: 30, image: "netflix.jpg" },
+                { id: 8, name: "Spotify", price: 59000, stock: 25, image: "spotify.jpg" },
+                { id: 9, name: "Disney+", price: 65000, stock: 20, image: "disney.jpg" }
+            ],
+            "Pulsa": [
+                { id: 10, name: "Telkomsel 10K", price: 10500, stock: 200, image: "telkomsel.jpg" },
+                { id: 11, name: "XL 10K", price: 10300, stock: 180, image: "xl.jpg" },
+                { id: 12, name: "Indosat 10K", price: 10200, stock: 150, image: "indosat.jpg" }
+            ]
+        };
+
+        // DOM Elements
+        const authButtons = document.getElementById('authButtons');
+        const userInfo = document.getElementById('userInfo');
+        const userDropdown = document.getElementById('userDropdown');
+        const userName = document.getElementById('userName');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeRegisterModal = document.getElementById('closeRegisterModal');
+        const showRegister = document.getElementById('showRegister');
+        const showLogin = document.getElementById('showLogin');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const categoryList = document.getElementById('categoryList');
+        const searchInput = document.getElementById('searchInput');
+        const popularProducts = document.getElementById('popularProducts');
+        const allProducts = document.getElementById('allProducts');
+        const cartCount = document.getElementById('cartCount');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+
+        // Cart state
+        let cart = [];
+
+        // Initialize the app
+        function init() {
+            checkAuthStatus();
+            renderCategories();
+            renderPopularProducts();
+            renderAllProducts();
+            setupEventListeners();
+        }
+
+        // Check authentication status
+        function checkAuthStatus() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (user) {
+                authButtons.style.display = 'none';
+                userInfo.style.display = 'flex';
+                userDropdown.style.display = 'block';
+                userName.textContent = `Telah masuk sebagai ${user.username}`;
+            } else {
+                authButtons.style.display = 'flex';
+                userInfo.style.display = 'none';
+                userDropdown.style.display = 'none';
+            }
+        }
+
+        // Render categories
+        function renderCategories() {
+            categoryList.innerHTML = '';
+            Object.keys(categories).forEach(categoryName => {
+                const categoryItem = document.createElement('div');
+                categoryItem.className = 'category-item';
+                categoryItem.textContent = categoryName;
+                categoryItem.addEventListener('click', () => {
+                    filterProductsByCategory(categoryName);
+                    // Set active class
+                    document.querySelectorAll('.category-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    categoryItem.classList.add('active');
+                });
+                categoryList.appendChild(categoryItem);
+            });
+            // Set first category as active
+            if (categoryList.children.length > 0) {
+                categoryList.children[0].classList.add('active');
+            }
+        }
+
+        // Render popular products (first 4 products)
+        function renderPopularProducts() {
+            popularProducts.innerHTML = '';
+            let count = 0;
+            for (const category in categories) {
+                if (count >= 4) break;
+                categories[category].slice(0, 4 - count).forEach(product => {
+                    if (count >= 4) return;
+                    renderProduct(product, popularProducts);
+                    count++;
+                });
+            }
+        }
+
+        // Render all products
+        function renderAllProducts() {
+            allProducts.innerHTML = '';
+            Object.values(categories).flat().forEach(product => {
+                renderProduct(product, allProducts);
+            });
+        }
+
+        // Render a single product
+        function renderProduct(product, container) {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card fade-in';
+            productCard.innerHTML = `
+                <div class="product-image">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3 class="product-name">${product.name}</h3>
+                <div class="product-price">Rp ${product.price.toLocaleString()}</div>
+                <div class="product-stock">Stok: ${product.stock}</div>
+                <button class="btn-add" data-id="${product.id}">Tambah ke Keranjang</button>
+            `;
+            container.appendChild(productCard);
+        }
+
+        // Filter products by category
+        function filterProductsByCategory(categoryName) {
+            allProducts.innerHTML = '';
+            categories[categoryName].forEach(product => {
+                renderProduct(product, allProducts);
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Auth buttons
+            loginBtn.addEventListener('click', () => {
+                loginModal.classList.add('active');
+            });
+            
+            registerBtn.addEventListener('click', () => {
+                registerModal.classList.add('active');
+            });
+            
+            // Modal close buttons
+            closeLoginModal.addEventListener('click', () => {
+                loginModal.classList.remove('active');
+            });
+            
+            closeRegisterModal.addEventListener('click', () => {
+                registerModal.classList.remove('active');
+            });
+            
+            // Switch forms
+            showRegister.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('active');
+                registerModal.classList.add('active');
+            });
+            
+            showLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                registerModal.classList.remove('active');
+                loginModal.classList.add('active');
+            });
+            
+            // Logout
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('currentUser');
+                checkAuthStatus();
+                cart = [];
+                updateCartDisplay();
+            });
+            
+            // Login form
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    checkAuthStatus();
+                    loginModal.classList.remove('active');
+                    loginForm.reset();
+                } else {
+                    alert('Email atau password salah!');
+                }
+            });
+            
+            // Register form
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('registerUsername').value;
+                const phone = document.getElementById('registerPhone').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    alert('Password dan konfirmasi password tidak cocok!');
+                    return;
+                }
+                
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                if (users.some(u => u.email === email)) {
+                    alert('Email sudah terdaftar!');
+                    return;
+                }
+                
+                const newUser = {
+                    username,
+                    phone,
+                    email,
+                    password,
+                    referral: document.getElementById('referral').value || ''
+                };
+                
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(newUser));
+                checkAuthStatus();
+                registerModal.classList.remove('active');
+                registerForm.reset();
+            });
+            
+            // Search functionality
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                allProducts.innerHTML = '';
+                Object.values(categories).flat().forEach(product => {
+                    if (product.name.toLowerCase().includes(searchTerm)) {
+                        renderProduct(product, allProducts);
+                    }
+                });
+            });
+            
+            // Add to cart functionality (using event delegation)
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-add')) {
+                    const productId = parseInt(e.target.dataset.id);
+                    addToCart(productId);
+                }
+            });
+            
+            // Checkout button
+            checkoutBtn.addEventListener('click', () => {
+                if (cart.length === 0) {
+                    alert('Keranjang belanja kosong!');
+                    return;
+                }
+                
+                let message = 'Halo, saya ingin membeli:\n';
+                cart.forEach(item => {
+                    message += `- ${item.name} (Rp ${item.price.toLocaleString()})\n`;
+                });
+                message += `\nTotal: Rp ${cart.reduce((sum, item) => sum + item.price, 0).toLocaleString()}`;
+                
+                const whatsappUrl = `https://wa.me/6282245682288?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            });
+        }
+
+        // Add to cart
+        function addToCart(productId) {
+            const allProductsFlat = Object.values(categories).flat();
+            const product = allProductsFlat.find(p => p.id === productId);
+            
+            if (product) {
+                cart.push(product);
+                updateCartDisplay();
+            }
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            cartCount.textContent = cart.length;
+            
+            cartItems.innerHTML = '';
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p style="color: var(--text-primary); text-align: center;">Keranjang kosong</p>';
+                cartTotal.textContent = 'Total: Rp 0';
+                return;
+            }
+            
+            cart.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <span>${item.name}</span>
+                    <span>Rp ${item.price.toLocaleString()}</span>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+            
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            cartTotal.textContent = `Total: Rp ${total.toLocaleString()}`;
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
